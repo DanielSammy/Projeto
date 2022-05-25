@@ -1,40 +1,36 @@
 import * as React from 'react';
-import { TextInput, Card } from 'react-native-paper';
-import { View } from 'react-native';
-import { styles } from './GlobalStyle';
+// import { TextInput } from 'react-native-paper';
+import { View, KeyboardAvoidingView, StyleSheet, TextInput } from 'react-native';
 
 
-const Block =() => {
-    return(
-        <Card>
-        <Card.Content>
-        </Card.Content>
-    </Card>
-        );
-};
+
+
 
 export const LoginScreen = () => {
     const [text, setText] = React.useState("");
 
    return(
-   <Block>
-
-
+   <KeyboardAvoidingView style={styles.background}>
+       <View>
+          
         <TextInput 
-        mode="outlined"
-        label="Usuario"
-        value={text}
-        onChangeText={text => setText(text)}
+        placeholder = "teste"
         />
 
         <TextInput 
-        mode="outlined"
-        label="Senha"
-        value={text}
-        onChangeText={text => setText(text)}
+        placeholder ="outro teste"
         />
-    </Block>
+    </View>
+    </KeyboardAvoidingView>
 
 );
 };
 
+const styles = StyleSheet.create({
+    background:{
+        flex: 1,
+        alignItems: 'center',
+        justifyContent:'center',
+        backgroundColor: '#fff'
+    }
+})
