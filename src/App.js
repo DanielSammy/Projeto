@@ -1,20 +1,16 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { View } from 'react-native';
+import { LoginScreen } from './components/Pages/Login';
+import { styles } from './components/Pages/GlobalStyle'; 
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <Text>aewww caraio </Text>
-      <StatusBar style="auto" />
+    <View >      
+    <LoginScreen>
+    </LoginScreen>
     </View>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+
+
+
