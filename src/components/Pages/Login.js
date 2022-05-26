@@ -15,15 +15,14 @@ export const LoginScreen = () => {
       
       <>
         <Header/>
+        
       <KeyboardAvoidingView style={styles.container}>
-        <View>
-
+        <View style={{ bottom: '15%'}}>
           <Image
-          
           style={styles.image}
-          source={require('../img/logo2.png')}
-          />
-        </View>
+          source={require('../img/LOGEXPRESS.png')}/>
+          </View>
+
 
 
        <View>
@@ -41,6 +40,7 @@ export const LoginScreen = () => {
         placeholder ="Senha"
         />
         <Button theme={theme} icon="cannabis" mode="contained" text='ENTRAR' onPress={() => console.log('Pressed')}></Button>
+
     </View>
     </KeyboardAvoidingView>
     </>

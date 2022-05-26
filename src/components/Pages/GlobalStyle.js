@@ -6,10 +6,10 @@ export const theme = {
   roundness: 2,
   colors: {
     ...DefaultTheme.colors,
-    backgroundColor: '#191919',
     primary: '#ff0000',
     accent: '#ff0000',
     borderColor: '#ff0000',
+    
   },
 };
 
@@ -25,15 +25,16 @@ export const styles = StyleSheet.create({
       backgroundColor: '#fff',
       width: 300,
       fontSize: 13,
-      top: 5,
+      bottom: 50,
       justifyContent: 'center',
       borderRadius: 7,
       marginBottom: 10,
       borderColor: 'blue',
     },
     image:{
+      justifyContent: 'center',
       alignItems: 'center',
-      bottom: '50%'
+      bottom: '0%'
     },
     header: {
       height: '9%',
