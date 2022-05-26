@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { View, KeyboardAvoidingView,  Image } from 'react-native';
-import {styles} from '../Pages/GlobalStyle';
-import { TextInput } from 'react-native-paper';
+import {styles, Header, theme} from '../Pages/GlobalStyle';
+import { Button, TextInput } from 'react-native-paper';
+
 
 
 
@@ -10,8 +11,11 @@ import { TextInput } from 'react-native-paper';
 export const LoginScreen = () => {
     const [text, setText] = React.useState("");
 
-   return(
-   <KeyboardAvoidingView style={styles.container}>
+    return(
+      
+      <>
+        <Header/>
+      <KeyboardAvoidingView style={styles.container}>
         <View>
 
           <Image
@@ -22,20 +26,25 @@ export const LoginScreen = () => {
         </View>
 
 
-       <View >
+       <View>
         <TextInput 
+          theme={theme}
         mode='outlined'
         style={styles.input}
-        placeholder = "teste"
+        placeholder = "Usuário"
         />
 
         <TextInput
+          theme={theme}
         mode='outlined' 
         style={styles.input}
-        placeholder ="outro teste"
+        placeholder ="Senha"
         />
+        <Button theme={theme} icon="cannabis" mode="contained" text='ENTRAR' onPress={() => console.log('Pressed')}></Button>
     </View>
     </KeyboardAvoidingView>
+    </>
+       
 
 );
 };
