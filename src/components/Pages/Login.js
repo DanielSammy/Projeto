@@ -1,22 +1,16 @@
 import * as React from 'react';
-import { View, KeyboardAvoidingView,  Image } from 'react-native';
-import {styles, Header, theme} from '../Pages/GlobalStyle';
+import { View, Image } from 'react-native';
+import {styles, Header, theme, Footer} from '../Pages/GlobalStyle';
 import { Button, TextInput } from 'react-native-paper';
 
 
+export const LoginScreen = (props) => {
+  
 
-
-
-
-export const LoginScreen = () => {
-    const [text, setText] = React.useState("");
-
-    return(
-      
+    return(      
       <>
         <Header/>
-        
-      <KeyboardAvoidingView style={styles.container}>
+        <View style={styles.container}>
         <View style={{ bottom: '15%'}}>
           <Image
           style={styles.image}
@@ -28,21 +22,22 @@ export const LoginScreen = () => {
        <View>
         <TextInput 
           theme={theme}
-        mode='outlined'
-        style={styles.input}
-        placeholder = "Usuário"
-        />
+          mode='outlined'
+          style={styles.input}
+          placeholder = "Usuário"
+          />
 
         <TextInput
           theme={theme}
-        mode='outlined' 
-        style={styles.input}
-        placeholder ="Senha"
-        />
-        <Button theme={theme} icon="cannabis" mode="contained" text='ENTRAR' onPress={() => console.log('Pressed')}></Button>
+          mode='outlined' 
+          style={styles.input}
+          placeholder ="Senha"
+          />
+        <Button theme={theme} icon="cannabis" mode="contained"  onPress={() => props.navigation.navigate("Home")}></Button>
 
-    </View>
-    </KeyboardAvoidingView>
+        </View>
+          </View>
+    <Footer/>
     </>
        
 

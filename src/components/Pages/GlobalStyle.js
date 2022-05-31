@@ -1,5 +1,5 @@
-import { StyleSheet } from 'react-native';
-import { Appbar, DefaultTheme } from 'react-native-paper'
+import { StyleSheet, View } from 'react-native';
+import { DefaultTheme } from 'react-native-paper'
 
 export const theme = {
   ...DefaultTheme,
@@ -37,21 +37,37 @@ export const styles = StyleSheet.create({
       bottom: '0%'
     },
     header: {
-      height: '9%',
+      top: 0,
+      height: '6%',
       backgroundColor: '#ff0000',
       
     },
+    footer: {
+      height: '6%',
+      backgroundColor: '#ff0000',
+      bottom: 0,
+      
+    },
   });
+
 
 export const Header = () => {
 
   return(
 
 
-  <Appbar style={styles.header}>
-   <Appbar.Action/>
-    </Appbar>
+  <View style={styles.header}>
+  </View>
 
   )
 }
 
+export const Footer =() => {
+  
+
+    return(
+    <View style={styles.footer}>
+    </View>
+    )
+  }
+  
