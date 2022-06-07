@@ -25,31 +25,59 @@ export const styles = StyleSheet.create({
       backgroundColor: '#fff',
       width: 300,
       fontSize: 13,
-      bottom: 50,
       justifyContent: 'center',
       borderRadius: 7,
       marginBottom: 10,
       borderColor: 'blue',
     },
-    image:{
+    imagem:{
+      width: 200,
+      height: 200,
       justifyContent: 'center',
       alignItems: 'center',
-      bottom: '0%'
+      position:'relative' ,
+      marginBottom: 40,
+      marginTop: 40,
     },
     header: {
       top: 0,
-      height: '6%',
+      height: '10%',
       backgroundColor: '#ff0000',
-      
     },
     footer: {
       height: '6%',
       backgroundColor: '#ff0000',
       bottom: 0,
-      
+      left: 0,
+      right:0 ,
+      position:'absolute',
+      },
+    content: {
+      minHeight: '84%',
+      height: '84%',
     },
+    button: {
+      color:'red',
+      width: 300,
+      height: 50,
+      fontSize: 13,
+      justifyContent: 'center',
+      borderRadius: 7,
+      marginBottom:10,
+    }
   });
 
+export const PageDefault = ({children}) => {
+  return (
+    <>
+    <Header />
+    <Content children={children}>
+        
+    </Content>  
+    <Footer display={true} />
+    </>
+  )
+}
 
 export const Header = () => {
 
@@ -62,12 +90,21 @@ export const Header = () => {
   )
 }
 
-export const Footer =() => {
+export const Footer = ({display}) => {
   
 
     return(
-    <View style={styles.footer}>
+    <View 
+    style={display ? styles.footer: {display:'none'}}>
     </View>
     )
   }
+
+export const Content = ({children}) => {
+  return (
+    <View style={styles.content}>
+      {children}
+    </View>
+  )
+}
   

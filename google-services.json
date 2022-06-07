@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "549642087049",
+    "firebase_url": "https://inovacao-db-default-rtdb.firebaseio.com",
+    "project_id": "inovacao-db",
+    "storage_bucket": "inovacao-db.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:549642087049:android:d9d6de279124a57918b458",
+        "android_client_info": {
+          "package_name": "com.ods.logexpress"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "549642087049-6q1ik4pfl46bp83s2ib0odhqi01dkea4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAHWRxkjdp5kIrqAIM40mknxPbM5L-F4yA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "549642087049-6q1ik4pfl46bp83s2ib0odhqi01dkea4.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
