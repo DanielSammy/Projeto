@@ -35,19 +35,14 @@ async function getUsuariosFirebase(){
   
 }
 
-const Home = () => {
-  const teste ='aaaa';
-  getUsuariosFirebase();
+const Home = ({route, navigation}) => {
+  const {usuarioLogado} =route.params
 
 
   return (
     <PageDefault>
       <Text >
-        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-        BBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
-        CCCCCCCCCCCCCCCCCCCCCCCCCCCCC
-        DDDDDDDDDDDDDDDDDDDDDDDDDDDD
-        EEEEEEEEEEEEEEEEEEEEEEEEEE
+        Bem Vindo {usuarioLogado.nome}
         
       </Text>
     </PageDefault>

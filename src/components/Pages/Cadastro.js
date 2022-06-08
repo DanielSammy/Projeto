@@ -10,7 +10,7 @@ WebBrowser.maybeCompleteAuthSession();
 
 
 export const Cadastro = ({route, navigation}) => {
-  const { token } = route.params;
+  const { usuarioCadastro } = route.params;
   const [ secureText, setSecureText ] = useState(true);
   const [ display, setDisplay ] = useState(true);
 
@@ -30,6 +30,13 @@ export const Cadastro = ({route, navigation}) => {
       setDisplay(true);
     });
   },[Keyboard])
+
+  useEffect(() => {
+    if(usuarioCadastro) {
+      setNome(usuarioCadastro.name)
+      setEmail(usuarioCadastro.email)
+    }
+  },[usuarioCadastro])
 
   return(      
       <>

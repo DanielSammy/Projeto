@@ -1,5 +1,6 @@
 import { initializeApp } from 'firebase/app'
-import { getFirestore } from 'firebase/firestore';
+import { collection, getFirestore, query, where, getDocs, getDoc, doc } from 'firebase/firestore';
+import { isEmpty } from '@firebase/util';
 
 //Configurações do Firebase
 
@@ -19,6 +20,48 @@ export const dataBase = getFirestore(app);
 
 // Consultas ao Banco Firebase
 
-export const loginFirebase = async () => {
+//Login
+export const loginFirebase = async (email, senha) => {
+  const usuarioLogando = {};
+  const usuarioCollection = collection(dataBase, 'usuario');
+  const usuarioQuery = query(usuarioCollection, where('email', '==' , email ));
+  const usuarioDoc = await getDocs(usuarioQuery);
+  if (isEmpty(usuarioDoc.docs)) {
+    const tipoErro = 'email'
+    const mensagemErro = 'Usuario informado não existe';
+    const erro =  new Error()
+    erro.tipo = tipoErro;
+    erro.message = mensagemErro;
+  throw(erro);
+  };
+  usuarioDoc.forEach(async (uDoc) => {
+    const uData = uDoc.data();
+    usuarioLogando.dados = uData;
+    usuarioLogando.dados.id = uDoc.id;
+    const cargo = {};
+    const cargoCollection = collection(dataBase, 'cargo');
+    const cargoDoc = await getDoc(doc(cargoCollection, uData.cargo.id));
+    const cData = cargoDoc.data();
+    cargo.id = uData.cargo.id;
+    cargo.descricao = cData.desc;
+    cargo.tipo = cData.tipo;
+    usuarioLogando.dados.cargo = cargo;    
+  })
+  if (usuarioLogando.dados.senha !== senha ) {
+    const tipoErro = 'senha'
+    const mensagemErro = 'Senha Informada incorreta';
+    const erro =  new Error()
+      erro.tipo = tipoErro;
+      erro.message = mensagemErro;
+    throw(erro);
+  };
+  return usuarioLogando.dados;
+}
 
+//Consulta Generica, busca o campo na tabela informada
+export async function consultaFirebase(tabela, campoWhere, sinalWhere, valorWhere) {
+  const genericCollection = collection(dataBase, tabela);
+  const genericQuery = query(genericCollection, where(campoWhere , sinalWhere, valorWhere));
+  const genericDoc = await getDocs(genericQuery);
+  return genericDoc;
 }

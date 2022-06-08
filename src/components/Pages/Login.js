@@ -5,8 +5,7 @@ import { View, Image, Keyboard } from 'react-native';
 import {styles, Header, theme, Footer} from '../Pages/GlobalStyle';
 import { Button, TextInput } from 'react-native-paper';
 import { useState, useEffect } from 'react';
-import { dataBase } from '../../firebase';
-import { collection, getDocs, getDoc, doc, query, where } from 'firebase/firestore';
+import { consultaFirebase, loginFirebase } from '../../firebase';
 import { isEmpty } from '@firebase/util';
 
 
@@ -30,46 +29,25 @@ export const LoginScreen = (props) => {
   const [ userLogin, setUserLogin ] = useState('');
   const [ userSenha, setUserSenha ] = useState('');
   const [ token, setToken ] = useState(false);
-  const [ usuarioGoogle, setUsuarioGoogle ] = useState({});
-  const [ usuario, setUsuario ] = useState({});
+  const [ usuarioGoogle, setUsuarioGoogle ] = useState(false);
+  const [ usuario, setUsuario ] = useState(false);
 
-  //Quando Teclado Aparece o Footer Some, unica forma que consegui
-  useEffect(() => {
-    Keyboard.addListener('keyboardDidShow', () => {
-      setDisplay(false);
-    });
-    Keyboard.addListener('keyboardDidHide', () => {
-      setDisplay(true);
-    });
-  },[Keyboard])
-
-  //Login com o Google
-  useEffect(() => {
-    if (response?.type === 'success') {
-      const { authentication: { accessToken } } = response;
-      setToken(accessToken);     
-    }
-  },[response])
-
-  useEffect( () => {
-    if (token)  {
-      verificaUsuarioExisteFirebase(token);
-    }
-  }, [token])
-
-  //Verifica se o Usuario Existe no Firebase;
-
+  /* Funcao que verifica se o Usuario Existe no Firebase se o Usuario existe ele chama a home
+    Se não ele vai vai para a tela de Cadastro passando as informações que veio do Google */
   async function verificaUsuarioExisteFirebase(token) {
     const dadosGoogle = await pegaDadosLoginGoogle(token)
-    const usuarioCollection = collection(dataBase, 'usuario');
-    const usuarioQuery = query(usuarioCollection, where('sub', '==', dadosGoogle.sub));
-    const usuarioDoc = (await getDocs(usuarioQuery)).forEach((doc) => {
-      setUsuario(doc.data());
-    });
+    const usuarioDoc = await consultaFirebase('usuario', 'sub', '==', dadosGoogle.sub)
+    if (isEmpty(usuarioDoc.docs)) {
+      setUsuarioGoogle(dadosGoogle)
+      return
+    }
+    usuarioDoc.forEach((doc) => {
+      setUsuario(doc.data());  
+    })
   }
 
-   //Pega os dados do usuário para já Cadastrar o mesmo no banco do Firebase
-   async function pegaDadosLoginGoogle(token) {
+  //Pega os dados do usuário logado no Google
+  async function pegaDadosLoginGoogle(token) {
     const response = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
       method: 'GET',
       headers: {
@@ -80,9 +58,72 @@ export const LoginScreen = (props) => {
     });
   
     const respostaJSON = await response.json();
-    setUsuarioGoogle(respostaJSON);
     return respostaJSON;
   }
+
+  //Funcao para Login
+  async function login(usuario,senha) {
+    await loginFirebase(usuario, senha)
+    .then((data) => {
+      setUsuario(data)
+    })
+    .catch((err) => {
+      const tipoErro = err.tipo;
+      console.log(err.tipo, ' : ', err.message)
+      if (tipoErro == 'email') {
+        setUserLogin('');
+        setUserSenha('')
+        return
+      }
+      if (tipoErro == 'senha') {
+        setUserSenha('');
+      }
+
+    })
+  }
+
+  //Usuario Existe
+  useEffect(() => {
+    if (usuario) {
+      props.navigation.navigate("Home", {
+        usuarioLogado : usuario
+      })
+    }
+  },[usuario])
+
+  //Usuario Não Existe
+  useEffect(() => {
+    if (usuarioGoogle) {
+      props.navigation.navigate("Cadastro", {
+        usuarioCadastro : usuarioGoogle
+      })
+    }
+  })
+
+  //Login com o Google
+  useEffect(() => {
+    if (response?.type === 'success') {
+      const { authentication: { accessToken } } = response;
+      setToken(accessToken);     
+    }
+  },[response])
+
+  //Se tiver Logado Com o Google Verifica se Usuario Existe no Banco
+  useEffect( () => {
+    if (token)  {
+      verificaUsuarioExisteFirebase(token);
+    }
+  }, [token])
+
+  //Quando Teclado Aparece o Footer Some, unica forma que consegui
+  useEffect(() => {
+    Keyboard.addListener('keyboardDidShow', () => {
+      setDisplay(false);
+    });
+    Keyboard.addListener('keyboardDidHide', () => {
+      setDisplay(true);
+    });
+  },[Keyboard])
 
     return(      
       <>
@@ -117,17 +158,13 @@ export const LoginScreen = (props) => {
               onChangeText={(senha) => setUserSenha(senha)}
               right={<TextInput.Icon onPress={() => setSecureText(!secureText)} name={secureText ? 'eye-off-outline' : 'eye-outline'} />}
             />
+
             <Button
             theme={theme}
             style={styles.button}
             mode="outlined"
             labelStyle={{fontSize:15}}
-            onPress={() => {
-              console.log(userLogin, userSenha); 
-              props.navigation.navigate("Cadastro", {
-                token : false
-              })
-              }}>
+            onPress={async () => await login(userLogin, userSenha)}>
               Logar
             </Button>
 
