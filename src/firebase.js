@@ -38,14 +38,10 @@ export const loginFirebase = async (email, senha) => {
     const uData = uDoc.data();
     usuarioLogando.dados = uData;
     usuarioLogando.dados.id = uDoc.id;
-    const cargo = {};
-    const cargoCollection = collection(dataBase, 'cargo');
-    const cargoDoc = await getDoc(doc(cargoCollection, uData.cargo.id));
-    const cData = cargoDoc.data();
-    cargo.id = uData.cargo.id;
-    cargo.descricao = cData.desc;
-    cargo.tipo = cData.tipo;
-    usuarioLogando.dados.cargo = cargo;    
+    const cargo = await consultaCargoPorID(uData.cargo.id);
+    usuarioLogando.dados.cargo = cargo;   
+    console.log(cargo)
+    console.log(usuarioLogando.dados.cargo)
   })
   if (usuarioLogando.dados.senha !== senha ) {
     const tipoErro = 'senha'
@@ -65,3 +61,15 @@ export async function consultaFirebase(tabela, campoWhere, sinalWhere, valorWher
   const genericDoc = await getDocs(genericQuery);
   return genericDoc;
 }
+
+//Consulta Cargo pelo ID
+export async function consultaCargoPorID(cargoID){
+  const cargoCollection = collection(dataBase, 'cargo');
+  const cargoDoc = await getDoc(doc(cargoCollection, cargoID));
+  const cData = cargoDoc.data();
+  const cargo = {
+    id : cargoID,
+    ...cData
+  }
+  return cargo; 
+};

@@ -5,7 +5,7 @@ import { View, Image, Keyboard } from 'react-native';
 import {styles, Header, theme, Footer} from '../Pages/GlobalStyle';
 import { Button, TextInput } from 'react-native-paper';
 import { useState, useEffect } from 'react';
-import { consultaFirebase, loginFirebase } from '../../firebase';
+import { consultaFirebase, loginFirebase, consultaCargoPorID } from '../../firebase';
 import { isEmpty } from '@firebase/util';
 
 
@@ -41,8 +41,12 @@ export const LoginScreen = (props) => {
       setUsuarioGoogle(dadosGoogle)
       return
     }
-    usuarioDoc.forEach((doc) => {
-      setUsuario(doc.data());  
+    usuarioDoc.forEach(async (doc) => {
+      const uData = doc.data();
+      uData.id = doc.id;
+      const cargo = await consultaCargoPorID(uData.cargo.id)
+      uData.cargo = cargo;
+      setUsuario(uData);  
     })
   }
 
@@ -65,6 +69,7 @@ export const LoginScreen = (props) => {
   async function login(usuario,senha) {
     await loginFirebase(usuario, senha)
     .then((data) => {
+      console.log(data.cargo)
       setUsuario(data)
     })
     .catch((err) => {
