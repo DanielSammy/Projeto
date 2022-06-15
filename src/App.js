@@ -13,9 +13,9 @@ function MyStack() {
   
   return (
     <Stack.Navigator style={{backgroundColor: '#ff0000'}}>
+      <Stack.Screen name="Home" component={Home} options={{title:"", headerTransparent:true}} />  
       <Stack.Screen name="Login" component={LoginScreen} options={{headerTransparent:true, title:""}} />
       <Stack.Screen name="Cadastro" component={Cadastro} options={{headerTransparent:true, title:""}} />
-      <Stack.Screen name="Home" component={Home} options={{title:"", headerTransparent:true}} />  
     </Stack.Navigator>
   )
 }

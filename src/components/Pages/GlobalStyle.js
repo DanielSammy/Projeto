@@ -1,4 +1,4 @@
-import { StyleSheet, View } from 'react-native';
+import { Dimensions, StyleSheet, View } from 'react-native';
 import { DefaultTheme } from 'react-native-paper'
 
 export const theme = {
@@ -12,7 +12,7 @@ export const theme = {
     
   },
 };
-
+// Estilização Para todos componentes
 export const styles = StyleSheet.create({
     container: {
       flex: 1,
@@ -64,7 +64,15 @@ export const styles = StyleSheet.create({
       justifyContent: 'center',
       borderRadius: 7,
       marginBottom:10,
-    }
+    },
+    document: {
+      flex: 1, 
+      justifyContent: 'center',
+      flexDirection: 'row',
+      alignItems: 'center',
+      
+      
+    },
   });
 
 export const PageDefault = ({children}) => {
