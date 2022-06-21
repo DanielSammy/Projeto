@@ -1,4 +1,4 @@
-import { Dimensions, StyleSheet, View } from 'react-native';
+import { Image, StyleSheet, Text, View, TouchableWithoutFeedback } from 'react-native';
 import { DefaultTheme } from 'react-native-paper'
 
 export const theme = {
@@ -69,11 +69,21 @@ export const styles = StyleSheet.create({
       flex: 1, 
       justifyContent: 'center',
       flexDirection: 'row',
-      alignItems: 'center',
-      
+      alignItems: 'center',    
       
     },
+    block: {
+      width: 150,
+      height: 150,
+    }
   });
+
+  export const Button = () => {
+    return(
+      <TouchableWithoutFeedback style={styles.block}>
+      </TouchableWithoutFeedback>
+    )
+  }
 
 export const PageDefault = ({children}) => {
   return (
