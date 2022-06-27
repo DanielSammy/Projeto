@@ -1,18 +1,20 @@
 import * as React from 'react';
 import * as WebBrowser from 'expo-web-browser';
 import * as Google from 'expo-auth-session/providers/google';
-import { View, Image, Keyboard } from 'react-native';
+import { View, Image, Keyboard, Alert, Platform } from 'react-native';
 import {styles, Header, theme, Footer} from '../Pages/GlobalStyle';
 import { Button, TextInput } from 'react-native-paper';
-import { useState, useEffect } from 'react';
-import { consultaFirebase, loginFirebase, consultaCargoPorID } from '../../firebase';
+import { useState, useEffect, useLayoutEffect } from 'react';
+import db from '../../database/firebase';
 import { isEmpty } from '@firebase/util';
+import { useAlerts } from 'react-native-paper-alerts';
+
 
 
 WebBrowser.maybeCompleteAuthSession();
 
 
-export const LoginScreen = (props) => {
+export const LoginScreen = ({navigation}) => {
   // Variaveis para Login com o Google
   const [ request, response, promptAsync ] = Google.useAuthRequest({
     expoClientId    : '549642087049-s7v47uep08u0qcbu4rfbma6goovmjb2s.apps.googleusercontent.com',
@@ -29,25 +31,34 @@ export const LoginScreen = (props) => {
   const [ userLogin, setUserLogin ] = useState('');
   const [ userSenha, setUserSenha ] = useState('');
   const [ token, setToken ] = useState(false);
-  const [ usuarioGoogle, setUsuarioGoogle ] = useState(false);
+  const [ usuarioCadastro, setUsuarioCadastro ] = useState(false);
   const [ usuario, setUsuario ] = useState(false);
+  const [ onLoading, setOnLoading ] = useState(true)
+  const alerts = useAlerts();
 
   /* Funcao que verifica se o Usuario Existe no Firebase se o Usuario existe ele chama a home
-    Se não ele vai vai para a tela de Cadastro passando as informações que veio do Google */
+    Se não ele vai fazer uma consulta para saber se o colaborador foi cadastrado e caso tenha sido
+    vai para a tela de cadastro, do usuário */
   async function verificaUsuarioExisteFirebase(token) {
     const dadosGoogle = await pegaDadosLoginGoogle(token)
-    const usuarioDoc = await consultaFirebase('usuario', 'sub', '==', dadosGoogle.sub)
+    const usuarioDoc = await db.consultaFirebase('usuario', 'email', '==', dadosGoogle.email)
     if (isEmpty(usuarioDoc.docs)) {
-      setUsuarioGoogle(dadosGoogle)
+      const colaboradorDoc = await db.colaborador.consultaColaboradorCampo('email', '==', dadosGoogle.email)
+      if (isEmpty(colaboradorDoc)) {
+        const alerta = {
+          title : 'Erro de Cadastro',
+          message : 'Informações sobre esse colaborador não existem, por favor contate o RH'
+        }
+        alerts.alert(alerta.title, alerta.message)
+        setUserLogin('');
+        setUserSenha('')
+        return
+      }
+      setUsuarioCadastro(colaboradorDoc)
       return
     }
-    usuarioDoc.forEach(async (doc) => {
-      const uData = doc.data();
-      uData.id = doc.id;
-      const cargo = await consultaCargoPorID(uData.cargo.id)
-      uData.cargo = cargo;
-      setUsuario(uData);  
-    })
+    const usuarioLogado = await db.usuario.consultaUsarioPorID(usuarioDoc.docs[0].id);
+    setUsuario(usuarioLogado);
   }
 
   //Pega os dados do usuário logado no Google
@@ -67,30 +78,55 @@ export const LoginScreen = (props) => {
 
   //Funcao para Login
   async function login(usuario,senha) {
-    await loginFirebase(usuario, senha)
-    .then((data) => {
-      console.log(data.cargo)
-      setUsuario(data)
-    })
-    .catch((err) => {
-      const tipoErro = err.tipo;
-      console.log(err.tipo, ' : ', err.message)
-      if (tipoErro == 'email') {
+    const usuarioDoc = await db.usuario.consultaUsuarioCampo('email', '==', usuario)
+    if (isEmpty(usuarioDoc)) {
+      const colaboradorDoc = await db.colaborador.consultaColaboradorCampo('email', '==', usuario)
+      if (isEmpty(colaboradorDoc)) {
+        const alerta = {
+          title : 'Erro de Cadastro',
+          message : 'Informações sobre esse colaborador não existem, por favor contate o RH'
+        }
+        await alerts.alert(alerta.title, alerta.message, [{
+          text:'OK',
+          onPress: () => console.log('RAPAZ')
+        }])
         setUserLogin('');
         setUserSenha('')
         return
       }
+      setUsuarioCadastro(colaboradorDoc)
+      return
+    }
+    const usuarioLogin = await db.usuario.loginFirebase(usuario, senha)
+    .catch((err) => {
+      const tipoErro = err.tipo;
+      console.log(err.tipo, ' : ', err.message)
       if (tipoErro == 'senha') {
         setUserSenha('');
       }
-
     })
+    setUsuario(usuarioLogin)
   }
+
+  useLayoutEffect(() => {
+    if (onLoading) {
+      setUsuarioCadastro('');
+      setUsuario('');
+      setUserSenha('@kalunga123');
+      setUserLogin('otaviored@gmail.com');
+      setToken('');
+      setOnLoading(false);
+    }
+    return () => {
+      setOnLoading(true)
+    }
+  },[])
+
 
   //Usuario Existe
   useEffect(() => {
     if (usuario) {
-      props.navigation.navigate("Home", {
+      navigation.navigate("Home", {
         usuarioLogado : usuario
       })
     }
@@ -98,9 +134,10 @@ export const LoginScreen = (props) => {
 
   //Usuario Não Existe
   useEffect(() => {
-    if (usuarioGoogle) {
-      props.navigation.navigate("Cadastro", {
-        usuarioCadastro : usuarioGoogle
+    if (usuarioCadastro) {
+      navigation.navigate("Cadastro", {
+        usuarioCadastro : usuarioCadastro,
+        tipoCadastro : 'Usuario'
       })
     }
   })
@@ -174,6 +211,7 @@ export const LoginScreen = (props) => {
             </Button>
 
             <Button
+            theme={theme}
             mode="contained"
             style={[styles.button, {backgroundColor:'blue'}]}
             labelStyle={{marginHorizontal:35, fontWeight:'bold'}}
